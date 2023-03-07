@@ -14,6 +14,7 @@ class WompiProvider
         @redirect_url = redirect_url
     end
   
+    # Make the transaction using Wompi API
     def create_transaction(amount_in_cents, currency, customer_email, installments, reference, phone_number, full_name, legal_id, legal_id_type)
         url = URI("#{ENV['WOMPI_URL']}/transactions")
 
