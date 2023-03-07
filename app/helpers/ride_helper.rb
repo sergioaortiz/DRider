@@ -1,5 +1,6 @@
 require 'dotenv/load'
 require 'geokit'
+require 'securerandom'
 
 class RideHelper
   attr_reader :provider
@@ -41,13 +42,14 @@ class RideHelper
     puts amount
 
     rider = Rider.where(id: ride.id_rider).first
+    reference = SecureRandom.alphanumeric(32)
 
     wompi_transaction = @provider.create_transaction(
       amount,
       "COP",
       rider.email,
       request["installments"],
-      "1ABp3x6dHX9dRraRaDXL117No9qE0PRC",
+      reference,
       rider.phone_number,
       rider.name,
       rider.legal_id,
@@ -56,7 +58,7 @@ class RideHelper
 
     transaction = Transaction.new
     transaction.id_ride = request["id_ride"]
-    transaction.reference = "1ABp3x6dHX9dRraRaDXL117No9qE0PRC"
+    transaction.reference = reference
     transaction.amount = amount
     transaction.created_at = Time.now
     transaction.save
