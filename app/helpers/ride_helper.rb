@@ -26,7 +26,6 @@ class RideHelper
       }
     }"
     response = JSON.parse(data)
-    puts driver.id
     response.to_json
   end
 
@@ -38,8 +37,6 @@ class RideHelper
     minutes = ((ride.final_time - ride.starting_time) / 60).to_i
     amount = ((final_distance * 100000) + (minutes * 20000) + 350000).to_i
     ride.update(final_latitude: request["final_latitude"], final_longitude: request["final_longitude"])
-    puts final_distance
-    puts amount
 
     rider = Rider.where(id: ride.id_rider).first
     reference = SecureRandom.alphanumeric(32)

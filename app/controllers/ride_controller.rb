@@ -1,8 +1,26 @@
 require 'sinatra'
 require 'sequel'
 require 'active_support'
+require 'bcrypt'
 
 class RideController < Sinatra::Base
+
+  before do
+    auth = request.env["HTTP_AUTHORIZATION"]
+
+    User.map{|x|
+      if !(BCrypt::Password.new(x.password) == auth) then
+        data = "{
+          \"type\": \"UNAUTHORIZED\",
+          \"reason\": \"Invalid token\"
+        }"
+        response = JSON.parse(data)
+        halt 401, {'Content-Type' => 'application/json'}, { error: response }.to_json
+      end
+    }
+
+    content_type :json
+  end
 
   put '/start-ride' do
     json = JSON.parse(request.body.read)
@@ -40,16 +58,26 @@ class RideController < Sinatra::Base
       response = JSON.parse(data)
       halt 422, {'Content-Type' => 'application/json'}, { error: response }.to_json
     else
-      transaction = Transaction.where(id_ride: json["id_ride"]).first
-      if transaction then
+      ride = Ride.where(id: json["id_ride"]).first
+      if ride then
+        transaction = Transaction.where(id_ride: json["id_ride"]).first
+        if transaction then
+          data = "{
+            \"type\": \"INPUT_VALIDATION_ERROR\",
+            \"reason\": \"A transaction already exists for this ride\"
+          }"
+          response = JSON.parse(data)
+          halt 422, {'Content-Type' => 'application/json'}, { error: response }.to_json
+        else
+          RideHelper.new().end_ride(json)
+        end
+      else
         data = "{
-          \"type\": \"INPUT_VALIDATION_ERROR\",
-          \"reason\": \"A transaction already exists for this ride\"
+          \"type\": \"NOT_FOUND_ERROR\",
+          \"reason\": \"Ride doesn't exist\"
         }"
         response = JSON.parse(data)
-        halt 422, {'Content-Type' => 'application/json'}, { error: response }.to_json
-      else
-        RideHelper.new().end_ride(json)
+        halt 404, {'Content-Type' => 'application/json'}, { error: response }.to_json
       end
     end
   end
