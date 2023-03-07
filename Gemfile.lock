@@ -1,24 +1,53 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    mustermann (3.0.0)
+    activesupport (7.0.4.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+    bcrypt (3.1.18)
+    concurrent-ruby (1.2.2)
+    dotenv (2.8.1)
+    geokit (1.14.0)
+    i18n (1.12.0)
+      concurrent-ruby (~> 1.0)
+    minitest (5.18.0)
+    mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
+    net-http (0.3.2)
+      uri
+    pg (1.4.6)
     rack (2.2.6.3)
-    rack-protection (3.0.5)
+    rack-protection (2.2.4)
       rack
     ruby2_keywords (0.0.5)
-    sinatra (3.0.5)
-      mustermann (~> 3.0)
-      rack (~> 2.2, >= 2.2.4)
-      rack-protection (= 3.0.5)
+    securerandom (0.2.2)
+    sequel (5.66.0)
+    sinatra (2.2.4)
+      mustermann (~> 2.0)
+      rack (~> 2.2)
+      rack-protection (= 2.2.4)
       tilt (~> 2.0)
     tilt (2.1.0)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+    uri (0.12.0)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  sinatra
+  activesupport
+  bcrypt
+  dotenv
+  geokit
+  net-http
+  pg
+  securerandom
+  sequel
+  sinatra (~> 2.2.4)
+  uri
 
 BUNDLED WITH
    2.4.7
