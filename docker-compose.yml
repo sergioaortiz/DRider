@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "${PORT}:5432"
+    expose:
+      - "5435"
+    environment:
+      - DATABASE_HOST=${HOST}
+      - POSTGRES_USER=${USER}
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=${DATABASE}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "8001:80"
+    depends_on:
+      - postgres
+  
+  sinatra:
+    restart: always
+    build: .
+    ports:
+      - "9292:9292"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    volumes:
+      - .:/drider
+    environment:
+      - HOST=postgres
+      - PORT=${PORT}
+      - USER=${USER}
+      - PASSWORD=${PASSWORD}
+      - DATABASE=${DATABASE}
+      - WOMPI_URL=${WOMPI_URL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - PUBLIC_KEY=${PUBLIC_KEY}
+      - ACCEPTANCE_TOKEN=${ACCEPTANCE_TOKEN}
+      - PAYMENT_SOURCE_ID=${PAYMENT_SOURCE_ID}
+      - REDIRECT_URL=${REDIRECT_URL}
